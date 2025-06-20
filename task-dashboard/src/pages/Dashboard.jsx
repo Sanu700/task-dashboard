@@ -5,7 +5,7 @@ import TaskColumn from '../components/TaskColumn';
 import { useTaskContext } from '../context/TaskContext';
 
 export default function Dashboard() {
-  const { state } = useTaskContext();
+  const { state, dispatch } = useTaskContext();
   const [filter, setFilter] = useState('');
   const [project, setProject] = useState('all');
 
@@ -25,11 +25,17 @@ export default function Dashboard() {
           ))}
         </select>
       </div>
+
       <div className="forms">
         <ProjectForm />
         <TaskForm />
       </div>
+
       <div className="task-columns">
+        {/* Projects Column */}
+        <TaskColumn title="My Projects" />
+
+        {/* Existing Task Columns */}
         <TaskColumn title="To Do" filter={filter} project={project} />
         <TaskColumn title="In Progress" filter={filter} project={project} />
         <TaskColumn title="Done" filter={filter} project={project} />

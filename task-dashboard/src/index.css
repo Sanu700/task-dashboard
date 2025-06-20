@@ -216,11 +216,16 @@ body.dark .task-column {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
   animation: fadeIn 0.4s ease-in;
+  cursor: grab;
 }
 
 .task-card:hover {
   transform: scale(1.02);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.task-card:active {
+  cursor: grabbing;
 }
 
 .task-card h3 {
@@ -509,3 +514,128 @@ body.dark .toggle-item {
     background-position: 0% 50%;
   }
 }
+.project-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.project-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+body.dark .project-list {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: #475569;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+body.dark .project-item {
+  border-color: #374151;
+}
+
+.color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.project-name {
+  flex-grow: 1;
+  margin-left: 0.5rem;
+}
+
+.delete-project {
+  background: transparent;
+  border: none;
+  color: #e11d48;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.delete-project:hover {
+  color: #b91c1c;
+}
+
+/* Edit Form Styles */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-input,
+.edit-textarea,
+.edit-select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: white;
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.edit-buttons button {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+body.dark .edit-input,
+body.dark .edit-textarea,
+body.dark .edit-select {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #e5e7eb;
+}
+
+/* Drag and Drop Styles */
+.task-card {
+  cursor: grab;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-column.drag-over {
+  background-color: #eef2ff;
+  border: 2px dashed #6366f1;
+  box-shadow: inset 0 0 0 2px #6366f1;
+}
+
+body.dark .task-column.drag-over {
+  background-color: #1e3a8a;
+  border-color: #6366f1;
+}
+

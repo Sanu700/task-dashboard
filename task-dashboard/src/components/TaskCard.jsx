@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { useTaskContext } from '../context/TaskContext';
 
 export default function TaskCard({ task, onDelete, onEdit }) {
+  const { dispatch } = useTaskContext();
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ ...task });
-  const [completed, setCompleted] = useState(task.completed || false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -11,22 +12,27 @@ export default function TaskCard({ task, onDelete, onEdit }) {
   };
 
   const handleSave = () => {
-    onEdit(task.id, { ...formData, completed });
+    onEdit(task.id, { ...formData });
     setEditing(false);
   };
 
-  const cardClass = `task-card ${completed ? 'completed' : ''}`;
+  const handleCheckboxChange = () => {
+    dispatch({ type: 'TOGGLE_TASK_COMPLETE', payload: task.id });
+  };
+
+  const cardClass = `task-card ${task.completed ? 'completed' : ''}`;
 
   return (
     <div className={cardClass} draggable onDragStart={(e) => e.dataTransfer.setData('text/plain', task.id)}>
       <div className="task-complete">
         <input
           type="checkbox"
-          checked={completed}
-          onChange={() => setCompleted(!completed)}
+          checked={task.completed}
+          onChange={handleCheckboxChange}
         />
-        <label>{completed ? 'Completed' : 'Mark Complete'}</label>
+        <label>{task.completed ? 'Completed' : 'Mark Complete'}</label>
       </div>
+
       {editing ? (
         <>
           <input name="title" value={formData.title} onChange={handleChange} />
@@ -50,6 +56,7 @@ export default function TaskCard({ task, onDelete, onEdit }) {
           <button onClick={() => setEditing(true)} className="edit-button">Edit</button>
         </>
       )}
+
       <button onClick={() => onDelete(task.id)} className="delete-button">Delete</button>
     </div>
   );
