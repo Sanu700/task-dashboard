@@ -117,7 +117,7 @@ export default function TaskColumn({ title, filter, project }) {
       {filtered.map(task => {
         const proj = getProjectInfo(task.projectId);
         const color = proj?.color || '#64748b'; // default gray
-        const projectName = proj?.name || 'Unknown Project';
+        const projectName = proj?.name || 'No Project';
 
         return (
           <div

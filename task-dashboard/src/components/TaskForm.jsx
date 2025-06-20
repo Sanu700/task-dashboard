@@ -23,7 +23,7 @@ export default function TaskForm() {
         assignee,
         dueDate,
         status,
-        projectId: Number(projectId), // ✅ store projectId
+        projectId: projectId === 'none' ? null : Number(projectId), // Handle "none" option
       },
     });
 
@@ -87,9 +87,9 @@ export default function TaskForm() {
         value={projectId}
         onChange={(e) => setProjectId(e.target.value)}
         className="w-full border border-gray-300 rounded px-3 py-2"
-        required
       >
         <option value="">Select Project</option>
+        <option value="none">None</option>
         {state.projects.map((proj) => (
           <option key={proj.id} value={proj.id}>
             {proj.name}
