@@ -43,10 +43,27 @@ export default function TaskColumn({ title, filter, project }) {
   }
 
   // Get tasks that match status
-  let filtered = state.tasks.filter(task =>
-    task.status === title &&
-    task.title.toLowerCase().includes(filter.toLowerCase())
-  );
+  let filtered = state.tasks.filter(task => {
+    // First filter by status
+    if (task.status !== title) return false;
+    
+    // Then filter by search term if provided
+    if (filter && filter.trim() !== '') {
+      const searchTerm = filter.toLowerCase().trim();
+      const taskTitle = (task.title || '').toLowerCase();
+      const taskDescription = (task.description || '').toLowerCase();
+      const taskAssignee = (task.assignee || '').toLowerCase();
+      
+      // Simple search in title, description, and assignee
+      if (!taskTitle.includes(searchTerm) && 
+          !taskDescription.includes(searchTerm) && 
+          !taskAssignee.includes(searchTerm)) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
 
   // Filter by project if selected
   if (project && project !== 'all') {

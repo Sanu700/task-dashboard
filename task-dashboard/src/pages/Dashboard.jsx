@@ -9,6 +9,11 @@ export default function Dashboard() {
   const [filter, setFilter] = useState('');
   const [project, setProject] = useState('all');
 
+  const handleFilterChange = (e) => {
+    const newFilter = e.target.value;
+    setFilter(newFilter);
+  };
+
   return (
     <div className="dashboard-container">
       <div className="filter-bar">
@@ -16,7 +21,7 @@ export default function Dashboard() {
           type="text"
           placeholder="Search tasks..."
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
+          onChange={handleFilterChange}
         />
         <select value={project} onChange={(e) => setProject(e.target.value)}>
           <option value="all">All Projects</option>
