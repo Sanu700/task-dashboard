@@ -5,6 +5,7 @@ export default function TaskTemplates() {
   const { dispatch } = useTaskContext();
   const [showTemplates, setShowTemplates] = useState(false);
   const dropdownRef = useRef(null);
+  const [showToast, setShowToast] = useState(false);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -72,34 +73,62 @@ export default function TaskTemplates() {
       dispatch({ type: 'ADD_TASK', payload: newTask });
     });
     setShowTemplates(false);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
   };
 
-  return (
-    <div className="task-templates" ref={dropdownRef}>
-      <button 
-        onClick={() => setShowTemplates(!showTemplates)}
-        className="template-toggle"
-      >
-        📋 Task Templates
-      </button>
-      
-      {showTemplates && (
-        <div className="templates-dropdown">
-          <h4>Choose a Template</h4>
-          <div className="template-list">
-            {Object.keys(templates).map((templateName) => (
-              <button
-                key={templateName}
-                onClick={() => applyTemplate(templateName)}
-                className="template-option"
-              >
-                <span className="template-name">{templateName}</span>
-                <span className="template-count">{templates[templateName].length} tasks</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+  // Toast notification
+  const toast = showToast ? (
+    <div style={{
+      position: 'fixed',
+      top: 24,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      background: 'linear-gradient(90deg, #10b981, #6366f1)',
+      color: 'white',
+      padding: '0.6rem 1.2rem',
+      borderRadius: '14px',
+      fontWeight: 600,
+      fontSize: '1rem',
+      boxShadow: '0 4px 24px rgba(16,185,129,0.18)',
+      zIndex: 50000,
+      letterSpacing: '0.5px',
+      textAlign: 'center',
+      animation: 'toastIn 0.4s cubic-bezier(.68,-0.55,.27,1.55)',
+    }}>
+      Template task added to To Do!
     </div>
+  ) : null;
+
+  return (
+    <>
+      {toast}
+      <div className="task-templates" ref={dropdownRef}>
+        <button 
+          onClick={() => setShowTemplates(!showTemplates)}
+          className="template-toggle"
+        >
+          📋 Task Templates
+        </button>
+        
+        {showTemplates && (
+          <div className="templates-dropdown">
+            <h4>Choose a Template</h4>
+            <div className="template-list">
+              {Object.keys(templates).map((templateName) => (
+                <button
+                  key={templateName}
+                  onClick={() => applyTemplate(templateName)}
+                  className="template-option"
+                >
+                  <span className="template-name">{templateName}</span>
+                  <span className="template-count">{templates[templateName].length} tasks</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 } 

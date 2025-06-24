@@ -4012,5 +4012,53 @@ body.dark select:focus {
   overflow: hidden;
 }
 
+@media (max-width: 600px) {
+  .filter-bar, .search-section {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100vw;
+    gap: 0.5rem;
+  }
+  .filter-bar input, .filter-bar select, .search-section input, .search-section select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  .filter-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .templates-dropdown {
+    min-width: 0;
+    width: 100vw;
+    max-width: 100vw;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 0 0 16px 16px;
+    box-sizing: border-box;
+  }
+  .badges-container, .export-container {
+    min-width: 0;
+    width: 95vw;
+    max-width: 98vw;
+    left: 2vw !important;
+    right: 2vw !important;
+    border-radius: 0 0 16px 16px;
+    box-sizing: border-box;
+  }
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 0.5rem;
+    gap: 0.5rem;
+    width: 100vw;
+    box-sizing: border-box;
+  }
+}
+
 
 
