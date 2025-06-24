@@ -134,7 +134,11 @@ export default function App() {
       {showCursor && <SplashCursor />}
 
       <header className="site-header">
-        <div className="logo" style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          className="logo"
+          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
           <img src={logo} alt="Logo" style={{ height: '36px', marginRight: '10px' }} />
           TaskBoard
         </div>
