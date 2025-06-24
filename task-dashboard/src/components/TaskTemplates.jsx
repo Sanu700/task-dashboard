@@ -5,23 +5,45 @@ export default function TaskTemplates() {
   const { dispatch } = useTaskContext();
   const [showTemplates, setShowTemplates] = useState(false);
   const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
   const [showToast, setShowToast] = useState(false);
+  const [dropdownStyle, setDropdownStyle] = useState({});
 
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
         setShowTemplates(false);
       }
     };
-
     if (showTemplates) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, [showTemplates]);
+
+  // Position dropdown on mobile
+  useEffect(() => {
+    if (showTemplates && buttonRef.current) {
+      const isMobile = window.innerWidth <= 600;
+      if (isMobile) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownStyle({
+          position: 'fixed',
+          top: rect.bottom + 8,
+          left: 8,
+          right: 8,
+          width: 'auto',
+          maxWidth: 'calc(100vw - 16px)',
+          zIndex: 99999,
+          borderRadius: 16,
+        });
+      } else {
+        setDropdownStyle({});
+      }
+    }
   }, [showTemplates]);
 
   const templates = {
@@ -107,12 +129,16 @@ export default function TaskTemplates() {
         <button 
           onClick={() => setShowTemplates(!showTemplates)}
           className="template-toggle"
+          ref={buttonRef}
         >
           📋 Task Templates
         </button>
-        
         {showTemplates && (
-          <div className="templates-dropdown">
+          <div
+            className={`templates-dropdown${window.innerWidth <= 600 ? ' mobile-dropdown' : ''}`}
+            style={dropdownStyle}
+            ref={dropdownRef}
+          >
             <h4>Choose a Template</h4>
             <div className="template-list">
               {Object.keys(templates).map((templateName) => (
