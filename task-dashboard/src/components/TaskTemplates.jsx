@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
 export default function TaskTemplates() {
@@ -25,20 +25,13 @@ export default function TaskTemplates() {
   }, [showTemplates]);
 
   // Position dropdown on mobile
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (showTemplates && buttonRef.current) {
       const isMobile = window.innerWidth <= 600;
       if (isMobile) {
         const rect = buttonRef.current.getBoundingClientRect();
         setDropdownStyle({
-          position: 'fixed',
           top: rect.bottom + 8,
-          left: 8,
-          right: 8,
-          width: 'auto',
-          maxWidth: 'calc(100vw - 16px)',
-          zIndex: 99999,
-          borderRadius: 16,
         });
       } else {
         setDropdownStyle({});
@@ -125,7 +118,7 @@ export default function TaskTemplates() {
   return (
     <>
       {toast}
-      <div className="task-templates" ref={dropdownRef}>
+      <div className="task-templates">
         <button 
           onClick={() => setShowTemplates(!showTemplates)}
           className="template-toggle"
@@ -136,8 +129,7 @@ export default function TaskTemplates() {
         {showTemplates && (
           <div
             className={`templates-dropdown${window.innerWidth <= 600 ? ' mobile-dropdown' : ''}`}
-            style={dropdownStyle}
-            ref={dropdownRef}
+            style={window.innerWidth <= 600 ? dropdownStyle : {}}
           >
             <h4>Choose a Template</h4>
             <div className="template-list">
