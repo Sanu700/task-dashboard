@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
 export default function TaskTemplates() {
@@ -22,21 +22,6 @@ export default function TaskTemplates() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showTemplates]);
-
-  // Position dropdown on mobile
-  useLayoutEffect(() => {
-    if (showTemplates && buttonRef.current) {
-      const isMobile = window.innerWidth <= 600;
-      if (isMobile) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setDropdownStyle({
-          top: rect.bottom + 8,
-        });
-      } else {
-        setDropdownStyle({});
-      }
-    }
   }, [showTemplates]);
 
   const templates = {
@@ -128,8 +113,8 @@ export default function TaskTemplates() {
         </button>
         {showTemplates && (
           <div
-            className={`templates-dropdown${window.innerWidth <= 600 ? ' mobile-dropdown' : ''}`}
-            style={window.innerWidth <= 600 ? dropdownStyle : {}}
+            className="timer-container templates-dropdown"
+            ref={dropdownRef}
           >
             <h4>Choose a Template</h4>
             <div className="template-list">

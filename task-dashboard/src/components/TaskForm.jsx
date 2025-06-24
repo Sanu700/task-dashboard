@@ -61,6 +61,7 @@ export default function TaskForm() {
         placeholder="Task Title"
         className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
         required
+        style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
       />
 
       <textarea
@@ -70,6 +71,7 @@ export default function TaskForm() {
         placeholder="Description"
         rows="3"
         className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
       />
 
       <select
@@ -78,6 +80,7 @@ export default function TaskForm() {
         onChange={handleChange}
         className="w-full border border-gray-300 rounded px-3 py-2"
         required
+        style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
       >
         <option value="" disabled>Select Priority</option>
         <option value="High">High Priority</option>

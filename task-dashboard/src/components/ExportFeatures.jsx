@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
 export default function ExportFeatures() {
@@ -7,22 +7,37 @@ export default function ExportFeatures() {
   const [exportFormat, setExportFormat] = useState('json');
   const [exportFilter, setExportFilter] = useState('all');
   const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
 
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
         setShowExport(false);
       }
     };
-
     if (showExport) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, [showExport]);
+
+  // Position dropdown on mobile
+  useLayoutEffect(() => {
+    if (showExport && buttonRef.current) {
+      const isMobile = window.innerWidth <= 600;
+      if (isMobile) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownStyle({
+          top: rect.bottom + 8,
+        });
+      } else {
+        setDropdownStyle({});
+      }
+    }
   }, [showExport]);
 
   const exportData = () => {
@@ -201,12 +216,16 @@ export default function ExportFeatures() {
       <button 
         onClick={() => setShowExport(!showExport)}
         className="export-toggle"
+        ref={buttonRef}
       >
         📤 Export Data
       </button>
       
       {showExport && (
-        <div className="export-container" ref={dropdownRef}>
+        <div
+          className="timer-container export-container"
+          ref={dropdownRef}
+        >
           <div className="export-header">
             <h4>Export Your Data</h4>
             <p>Choose what to export and in which format</p>
@@ -219,6 +238,7 @@ export default function ExportFeatures() {
                 value={exportFilter} 
                 onChange={(e) => setExportFilter(e.target.value)}
                 className="export-select"
+                style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
               >
                 <option value="all">All Data (Tasks + Projects)</option>
                 <option value="tasks">Tasks Only</option>
@@ -233,6 +253,7 @@ export default function ExportFeatures() {
                 value={exportFormat} 
                 onChange={(e) => setExportFormat(e.target.value)}
                 className="export-select"
+                style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
               >
                 <option value="json">JSON (Structured Data)</option>
                 <option value="csv">CSV (Spreadsheet)</option>

@@ -29,14 +29,16 @@ export default function ProjectForm() {
           placeholder="Project Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
           required
         />
         <textarea
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+          style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
           rows="3"
         />
         <div className="flex items-center gap-3">
@@ -45,12 +47,14 @@ export default function ProjectForm() {
             type="color" 
             value={color} 
             onChange={(e) => setColor(e.target.value)}
-            className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+            className="h-8 border border-gray-300 rounded cursor-pointer"
+            style={window.innerWidth <= 600 ? { width: '48px', minWidth: 0, boxSizing: 'border-box' } : {}}
           />
         </div>
         <button 
           type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition-colors duration-200 font-medium"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition-colors duration-200 font-medium"
+          style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
         >
           Save Project
         </button>

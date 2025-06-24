@@ -194,9 +194,12 @@ export default function Dashboard() {
           type="text"
           placeholder="Search tasks..."
           value={filter}
-            onChange={handleFilterChange}
-          />
-          <select value={searchCategory} onChange={(e) => setSearchCategory(e.target.value)}>
+          onChange={handleFilterChange}
+          style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
+        />
+          <select value={searchCategory} onChange={(e) => setSearchCategory(e.target.value)}
+            style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
+          >
             <option value="all">All Categories</option>
             <option value="work">Work</option>
             <option value="personal">Personal</option>

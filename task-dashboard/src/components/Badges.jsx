@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
 export default function Badges() {
@@ -7,20 +7,19 @@ export default function Badges() {
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const dropdownRef = useRef(null);
-  const modalRef = useRef(null);
+  const buttonRef = useRef(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
 
   // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {
         setShowBadges(false);
       }
     };
-
     if (showBadges) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -42,6 +41,21 @@ export default function Badges() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showShareModal]);
+
+  // Position dropdown on mobile
+  useLayoutEffect(() => {
+    if (showBadges && buttonRef.current) {
+      const isMobile = window.innerWidth <= 600;
+      if (isMobile) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownStyle({
+          top: rect.bottom + 8,
+        });
+      } else {
+        setDropdownStyle({});
+      }
+    }
+  }, [showBadges]);
 
   // Achievement definitions
   const achievements = {
@@ -175,16 +189,20 @@ export default function Badges() {
   };
 
   return (
-    <div className="achievement-badges" ref={dropdownRef}>
+    <div className="achievement-badges">
       <button 
         onClick={() => setShowBadges(!showBadges)}
         className="badge-toggle"
+        ref={buttonRef}
       >
         🏆 Achievements ({earnedBadges.length})
       </button>
       
       {showBadges && (
-        <div className="badges-container">
+        <div
+          className="timer-container badges-container"
+          ref={dropdownRef}
+        >
           <div className="badges-header">
             <h4>Achievement Badges</h4>
             <p>Earn badges by completing tasks and reaching milestones!</p>

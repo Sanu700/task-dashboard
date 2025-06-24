@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
 export default function AchievementBadges() {
@@ -19,6 +19,8 @@ export default function AchievementBadges() {
   const [pendingBadge, setPendingBadge] = useState(null);
   // Toast state for 'Achievement Unlocked!'
   const [showToast, setShowToast] = useState(false);
+  const buttonRef = useRef(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
 
   // Achievement definitions
   const achievements = {
@@ -295,6 +297,26 @@ export default function AchievementBadges() {
     }
   }, [justEarnedBadge]);
 
+  // Position dropdown/modal on mobile
+  useLayoutEffect(() => {
+    if (justEarnedBadge && buttonRef.current) {
+      const isMobile = window.innerWidth <= 600;
+      if (isMobile) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownStyle({
+          top: rect.bottom + 8,
+          left: 8,
+          right: 8,
+          maxWidth: 'calc(100vw - 16px)',
+          position: 'fixed',
+          zIndex: 20000,
+        });
+      } else {
+        setDropdownStyle({});
+      }
+    }
+  }, [justEarnedBadge]);
+
   // Only render the badge modal (no button or panel)
   return justEarnedBadge ? (
     <>
@@ -303,7 +325,10 @@ export default function AchievementBadges() {
           Achievement Unlocked!
         </div>
       )}
-      <div className="share-modal-overlay badge-celebration-overlay" style={{ zIndex: 20000 }}>
+      <div
+        className={`share-modal-overlay badge-celebration-overlay${window.innerWidth <= 600 ? ' mobile-dropdown' : ''}`}
+        style={window.innerWidth <= 600 ? dropdownStyle : { zIndex: 20000 }}
+      >
         <div className="share-modal badge-celebration-modal">
           {/* Confetti background */}
           <div className="confetti-bg">
