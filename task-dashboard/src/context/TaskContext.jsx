@@ -19,7 +19,16 @@ function reducer(state, action) {
       return {
         ...state,
         tasks: state.tasks.map(task =>
-          task.id === action.payload.id ? { ...task, status: action.payload.status } : task
+          task.id === action.payload.id
+            ? {
+                ...task,
+                status: action.payload.status,
+                completedAt:
+                  action.payload.status === 'Done'
+                    ? task.completedAt || new Date().toISOString()
+                    : null,
+              }
+            : task
         ),
       };
     case 'EDIT_TASK':
@@ -37,6 +46,8 @@ function reducer(state, action) {
             ? {
                 ...task,
                 status: task.status === 'Done' ? 'To Do' : 'Done',
+                completedAt:
+                  task.status === 'Done' ? null : new Date().toISOString(),
               }
             : task
         ),
