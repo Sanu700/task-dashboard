@@ -4,6 +4,8 @@ import Dashboard from './pages/Dashboard';
 import SplashCursor from './SplashCursor';
 import logo from './assets/logo.webp';
 import './index.css';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import AddTaskProject from './pages/AddTaskProject';
 
 // Site-wide Confetti Component
 function ConfettiCelebration() {
@@ -115,13 +117,8 @@ function ConfettiCelebration() {
 }
 
 export default function App() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
   const [showCursor, setShowCursor] = useState(true);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('theme') === 'dark';
-    setDark(saved);
-  }, []);
 
   useEffect(() => {
     document.body.classList.toggle('dark', dark);
@@ -130,57 +127,65 @@ export default function App() {
 
   return (
     <TaskProvider>
-      <ConfettiCelebration />
-      {showCursor && <SplashCursor />}
+      <Router>
+        <ConfettiCelebration />
+        {showCursor && <SplashCursor />}
 
-      <header className="site-header">
-        <div
-          className="logo"
-          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          <img src={logo} alt="Logo" style={{ height: '36px', marginRight: '10px' }} />
-          TaskBoard
-        </div>
-
-        <div className="toggle-wrapper">
-          {/* Dark Mode Toggle */}
-          <div className="toggle-item">
-            <span className="toggle-label">Dark Mode</span>
-            <label className="theme-toggle attractive-toggle">
-              <input
-                type="checkbox"
-                checked={dark}
-                onChange={() => setDark(!dark)}
-              />
-              <span className="slider" />
-            </label>
+        <header className="site-header">
+          <div
+            className="logo"
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            <img src={logo} alt="Logo" style={{ height: '36px', marginRight: '10px' }} />
+            TaskBoard
           </div>
+          <nav style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem' }}>
+            <Link to="/" className="nav-link">Dashboard</Link>
+            <Link to="/add" className="nav-link">Add Task/Project</Link>
+          </nav>
+          <div className="toggle-wrapper">
+            {/* Dark Mode Toggle */}
+            <div className="toggle-item">
+              <span className="toggle-label">Dark Mode</span>
+              <label className="theme-toggle attractive-toggle">
+                <input
+                  type="checkbox"
+                  checked={dark}
+                  onChange={() => setDark(!dark)}
+                />
+                <span className="slider" />
+              </label>
+            </div>
 
-          {/* Splash Cursor Toggle */}
-          <div className="toggle-item">
-            <span className="toggle-label">Splash Cursor</span>
-            <label className="theme-toggle splash-toggle">
-              <input
-                type="checkbox"
-                checked={showCursor}
-                onChange={() => setShowCursor(!showCursor)}
-              />
-              <span className="slider flashy-slider" title="Toggle Splash Cursor" />
-            </label>
+            {/* Splash Cursor Toggle */}
+            <div className="toggle-item">
+              <span className="toggle-label">Splash Cursor</span>
+              <label className="theme-toggle splash-toggle">
+                <input
+                  type="checkbox"
+                  checked={showCursor}
+                  onChange={() => setShowCursor(!showCursor)}
+                />
+                <span className="slider flashy-slider" title="Toggle Splash Cursor" />
+              </label>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="container">
-        <Dashboard />
-      </main>
+        <main className="container">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/add" element={<AddTaskProject />} />
+          </Routes>
+        </main>
 
-      <footer className="site-footer enhanced-footer">
-        <div className="footer-bottom">
-          <span>&copy; 2025 TaskBoard. All rights reserved.</span>
-        </div>
-      </footer>
+        <footer className="site-footer enhanced-footer">
+          <div className="footer-bottom">
+            <span>&copy; 2025 TaskBoard. All rights reserved.</span>
+          </div>
+        </footer>
+      </Router>
     </TaskProvider>
   );
 }

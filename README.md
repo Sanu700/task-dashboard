@@ -1,31 +1,32 @@
 # 🚀 TaskBoard
 
-A sleek, modern task management board built with React and Framer Motion — featuring dark mode, responsive design, animated badge celebrations, and a dynamic splash cursor.
+A modern, high-performance task management board built with React and Framer Motion — featuring dark mode, elegant animations, badge-based achievement tracking, and an interactive splash cursor.
 
 ---
 
 ## ✨ Features
 
-* 🔥 Fluid **WebGL splash cursor** animation
-* 🌙 **Dark mode** with persistent toggle
-* 🧩 **Task management** with creation, editing, and drag-and-drop reordering
-* 📱 **Responsive UI** optimized for all screen sizes
-* 🎨 Clean and modern design with gradients and subtle transitions
-* 🏅 **Animated badge celebration system**
-* 🥇 **Robust badge queueing** — handles multiple achievements sequentially
-* 🎉 **Confetti & badge integration** — no overlap between effects
-* 🎯 **Perfect centering and polish** across devices and modes
+* 🖱️ **Fluid WebGL splash cursor** with reactive motion
+* 🌙 **Dark mode** toggle with persistent user preference
+* 🧩 **Intuitive task management** — create, edit, and drag-and-drop reorder tasks and projects
+* 💻 **Adaptive layout** designed for modern desktops and large screens
+* 🎨 **Polished UI/UX** with subtle transitions, gradients, and clean visuals
+* 🏅 **Dynamic badge celebration system** with queue handling
+* 🎉 **Confetti + badge coordination** — zero animation overlap
+* ⏰ **Integrated Pomodoro timer** with audio cues for session transitions
 
 ---
 
 ## 🏅 Badge Celebration System
 
-* Earn achievements (e.g., first task, 10 tasks, night owl, etc.)
-* A **circular celebration modal** with icon and badge name pops up in the center
-* A **toast notification** (“Achievement Unlocked!”) appears at the top
-* Works seamlessly with confetti: celebrations wait their turn
-* **Mobile-friendly, perfectly centered**, and dark-mode compatible
-* **Multiple badge celebrations** are queued — no visual collision
+Achievement tracking that rewards user milestones with style:
+
+* Unlock badges for key actions (e.g., first task, task streaks, late-night productivity)
+* **Centered modal celebration** with badge icon and name
+* **"Achievement Unlocked" toast** for additional feedback
+* **Confetti animation** timed to avoid overlapping with other effects
+* **Fully queued** — celebrations appear one at a time
+* **Fully dark-mode compatible**
 
 ---
 
@@ -33,8 +34,8 @@ A sleek, modern task management board built with React and Framer Motion — fea
 
 * ⚛️ React
 * 🎞️ Framer Motion
-* 🌐 Custom WebGL cursor
-* 💅 HTML/CSS (Dark mode + responsive)
+* 🌐 Custom WebGL Cursor
+* 💅 HTML/CSS (dark mode, flex/grid layout)
 * ⚡ Vite
 
 ---
@@ -56,7 +57,7 @@ npm run dev
 npm run build
 ```
 
-* Output goes to the `dist` folder
+* Output will be available in the `dist` folder
 
 ---
 
@@ -65,64 +66,62 @@ npm run build
 ### 🔗 Netlify
 
 * **Base directory:** `task-dashboard`
-
 * **Build command:** `npm run build`
-
 * **Publish directory:** `dist`
 
-* Add this to `public/_redirects`:
+Add the following to `public/_redirects`:
 
-  ```
-  /*    /index.html   200
-  ```
+```
+/*    /index.html   200
+```
 
-* Ensure `.nvmrc` and `netlify.toml` pin Node.js to `18`
+Ensure `.nvmrc` and `netlify.toml` specify Node.js `v18`.
 
 ### ▲ Vercel
 
 * **Root directory:** `task-dashboard`
 * **Build command:** `npm run build`
 * **Output directory:** `dist`
-* Add this to `vercel.json`:
 
-  ```json
-  {
-    "routes": [
-      { "src": "/(.*)", "dest": "/index.html" }
-    ]
-  }
-  ```
+Add the following to `vercel.json`:
+
+```json
+{
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
+```
 
 ---
 
 ## 🖼️ Assets & Icons
 
-* Place assets like `favicon.ico`, `logo.webp`, etc. inside the `public/` folder
-* Reference them in `index.html`:
+Place assets like `favicon.ico`, `logo.webp`, etc. inside the `public/` folder. Reference them in `index.html`:
 
-  ```html
-  <link rel="icon" type="image/webp" href="/logo.webp" />
-  ```
+```html
+<link rel="icon" type="image/webp" href="/logo.webp" />
+```
 
 ---
 
-## ⚠️ Notes
+## ⚠️ Requirements & Notes
 
-* Requires **Node.js v18+** (`.nvmrc` is provided)
-* `Rollup` is pinned to v3 for compatibility with Netlify + Vite
-* After adding new dependencies, run:
+* Requires **Node.js v18+**
+* `.nvmrc` is provided to standardize development environments
+* `Rollup` is pinned to v3 for compatibility with Vite + Netlify
+* After installing new packages:
 
-  ```bash
-  npm install
-  git commit package-lock.json
-  ```
+```bash
+npm install
+git commit package-lock.json
+```
 
 ---
 
 ## 📄 License
 
-**MIT** — free to use, modify, and distribute.
+**MIT License** — free to use, modify, and distribute.
 
 ---
-
 

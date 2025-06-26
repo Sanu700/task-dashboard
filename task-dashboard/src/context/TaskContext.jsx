@@ -11,6 +11,13 @@ function reducer(state, action) {
   switch (action.type) {
     case 'ADD_PROJECT':
       return { ...state, projects: [...state.projects, action.payload] };
+    case 'EDIT_PROJECT':
+      return {
+        ...state,
+        projects: state.projects.map(project =>
+          project.id === action.payload.id ? { ...project, ...action.payload.updates } : project
+        ),
+      };
     case 'ADD_TASK':
       return { ...state, tasks: [...state.tasks, action.payload] };
     case 'DELETE_TASK':

@@ -5,7 +5,7 @@ export default function ProjectForm() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState('#4f46e5');
-  const { state, dispatch } = useTaskContext();
+  const { dispatch } = useTaskContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,13 +17,10 @@ export default function ProjectForm() {
     setDescription('');
   };
 
-  const handleDelete = (id) => {
-    dispatch({ type: 'DELETE_PROJECT', payload: id });
-  };
-
   return (
-    <div className="project-form-wrapper">
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="project-form-wrapper forms" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', maxWidth: 500, margin: '0 auto', width: '100%' }}>
+      <form className="project-form" onSubmit={handleSubmit} style={{ width: '100%' }}>
+        <h3 style={{ marginBottom: '0.5rem', fontWeight: 700, color: '#6366f1', textAlign: 'center' }}>Add New Project</h3>
         <input
           type="text"
           placeholder="Project Name"
@@ -59,24 +56,6 @@ export default function ProjectForm() {
           Save Project
         </button>
       </form>
-
-      {state.projects.length > 0 && (
-        <div className="project-list">
-          {state.projects.map((proj) => (
-            <div key={proj.id} className="project-item">
-              <div className="color-dot" style={{ backgroundColor: proj.color }} />
-              <span className="project-name">{proj.name}</span>
-              <button
-                className="delete-project"
-                onClick={() => handleDelete(proj.id)}
-                title="Delete Project"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

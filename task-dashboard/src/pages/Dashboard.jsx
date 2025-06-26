@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import ProjectForm from '../components/ProjectForm';
-import TaskForm from '../components/TaskForm';
 import TaskColumn from '../components/TaskColumn';
 import TaskTemplates from '../components/TaskTemplates';
 import PomodoroTimer from '../components/PomodoroTimer';
@@ -9,6 +7,7 @@ import Badges from '../components/Badges';
 import ExportFeatures from '../components/ExportFeatures';
 import AchievementBadges from '../components/AchievementBadges';
 import { useTaskContext } from '../context/TaskContext';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const { state, dispatch } = useTaskContext();
@@ -148,58 +147,45 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-container">
-      {/* Statistics Overview */}
-      {showStats && (
-        <div className="stats-overview">
-          <div className="stat-card">
-            <h3>📊 Overview</h3>
-            <div className="stat-grid">
-              <div className="stat-item">
-                <span className="stat-number">{totalTasks}</span>
-                <span className="stat-label">Total Tasks</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">{completedTasks}</span>
-                <span className="stat-label">Completed</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">{inProgressTasks}</span>
-                <span className="stat-label">In Progress</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">{todoTasks}</span>
-                <span className="stat-label">To Do</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number overdue">{overdueTasks}</span>
-                <span className="stat-label">Overdue</span>
-              </div>
-            </div>
-            <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${completionRate}%` }}
-              ></div>
-              <span className="progress-text">{completionRate}% Complete</span>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <div className="dashboard-container" style={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+    }}>
       {/* Enhanced Filter Bar */}
-      <div className="filter-bar">
-        <div className="search-section">
+      <div className="filter-bar" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '1.2rem',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '14px',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+          padding: '1.1rem 2rem',
+          margin: '0 auto',
+          maxWidth: 1200,
+        }}>
         <input
           type="text"
           placeholder="Search tasks..."
           value={filter}
-          onChange={handleFilterChange}
-          style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
+            onChange={handleFilterChange}
+            style={{ minWidth: 220, maxWidth: 260, flex: 1, padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '1rem' }}
         />
-          <select value={searchCategory} onChange={(e) => setSearchCategory(e.target.value)}
-            style={window.innerWidth <= 600 ? { width: '100vw', maxWidth: '100vw', minWidth: 0, boxSizing: 'border-box' } : {}}
-          >
+          <select value={project} onChange={e => setProject(e.target.value)} style={{ minWidth: 220, maxWidth: 260, flex: 1, padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '1rem' }}>
+            <option value="all">All Projects</option>
+            {state.projects.map((proj) => (
+              <option key={proj.id} value={proj.id}>{proj.name}</option>
+            ))}
+          </select>
+          <select value={searchPriority} onChange={e => setSearchPriority(e.target.value)} style={{ minWidth: 220, maxWidth: 260, flex: 1, padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '1rem' }}>
+            <option value="all">All Priorities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <select value={searchCategory} onChange={e => setSearchCategory(e.target.value)} style={{ minWidth: 220, maxWidth: 260, flex: 1, padding: '0.7rem 1rem', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '1rem' }}>
             <option value="all">All Categories</option>
             <option value="work">Work</option>
             <option value="personal">Personal</option>
@@ -208,26 +194,16 @@ export default function Dashboard() {
             <option value="finance">Finance</option>
             <option value="other">Other</option>
           </select>
-          <select value={searchPriority} onChange={(e) => setSearchPriority(e.target.value)}>
-            <option value="all">All Priorities</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-          </select>
-        <select value={project} onChange={(e) => setProject(e.target.value)}>
-          <option value="all">All Projects</option>
-          {state.projects.map((proj) => (
-            <option key={proj.id} value={proj.id}>{proj.name}</option>
-          ))}
-        </select>
         </div>
-        <div className="filter-actions">
+        {/* Utility buttons row: Stats, TaskTemplates, PomodoroTimer, Badges, ExportFeatures */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '0.7rem' }}>
           <button 
             onClick={() => setShowStats(!showStats)}
             className="stats-toggle"
             title="Toggle Statistics"
+            style={{ minWidth: 120 }}
           >
-            📊
+            📊 Stats
           </button>
           <TaskTemplates />
           <PomodoroTimer />
@@ -236,37 +212,57 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="forms">
-        <ProjectForm />
-        <TaskForm />
-      </div>
+      {/* Inline Stats Panel (restored behavior) */}
+      {showStats && (
+        <div className="stat-card">
+          <h3>📊 Overview</h3>
+          <div className="stat-grid">
+            <div className="stat-item">
+              <span className="stat-number">{totalTasks}</span>
+              <span className="stat-label">Total Tasks</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{completedTasks}</span>
+              <span className="stat-label">Completed</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{inProgressTasks}</span>
+              <span className="stat-label">In Progress</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{todoTasks}</span>
+              <span className="stat-label">To Do</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number overdue">{overdueTasks}</span>
+              <span className="stat-label">Overdue</span>
+            </div>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${completionRate}%` }}></div>
+            <span className="progress-text">{completionRate}% Complete</span>
+          </div>
+        </div>
+      )}
 
-      <div className="task-columns">
-        <TaskColumn
-          title="To Do"
-          filter={filter}
-          project={project}
-          category={searchCategory}
-          priority={searchPriority}
-          onTaskClick={handleTaskClick}
-        />
-        <TaskColumn
-          title="In Progress"
-          filter={filter}
-          project={project}
-          category={searchCategory}
-          priority={searchPriority}
-          onTaskClick={handleTaskClick}
-        />
-        <TaskColumn
-          title="Done"
-          filter={filter}
-          project={project}
-          category={searchCategory}
-          priority={searchPriority}
-          onTaskClick={handleTaskClick}
-        />
-        <TaskColumn title="My Projects" />
+      {/* Task Columns Row */}
+      <div className="task-columns" style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, minmax(320px, 1fr))',
+        gap: '2rem',
+        maxWidth: '1700px',
+        margin: '0 auto',
+        width: '100%',
+        alignItems: 'stretch',
+        justifyItems: 'stretch',
+        padding: '3.5rem 1rem 3.5rem 1rem',
+        flexGrow: 1,
+        alignSelf: 'center',
+      }}>
+        <TaskColumn title="To Do" filter={filter} project={project} category={searchCategory} priority={searchPriority} onTaskClick={handleTaskClick} statusClass="todo" />
+        <TaskColumn title="In Progress" filter={filter} project={project} category={searchCategory} priority={searchPriority} onTaskClick={handleTaskClick} statusClass="inprogress" />
+        <TaskColumn title="Done" filter={filter} project={project} category={searchCategory} priority={searchPriority} onTaskClick={handleTaskClick} statusClass="done" />
+        <TaskColumn title="My Projects" statusClass="projects" />
       </div>
       {/* Modal Portal */}
       {expandedTask && task && ReactDOM.createPortal(

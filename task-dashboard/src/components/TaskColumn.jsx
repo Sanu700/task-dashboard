@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useTaskContext } from '../context/TaskContext';
 
-export default function TaskColumn({ title, filter, project, category, priority, onTaskClick }) {
+export default function TaskColumn({ title, filter, project, category, priority, onTaskClick, statusClass: statusClassProp }) {
   const { state, dispatch } = useTaskContext();
   const [editingTask, setEditingTask] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [taskCount, setTaskCount] = useState(0);
   const [expandedTask, setExpandedTask] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
+  const [editProjectForm, setEditProjectForm] = useState({});
+  const [expandedProject, setExpandedProject] = useState(null);
 
-  // Determine status class for column and cards
-  let statusClass = '';
-  if (title === 'To Do') statusClass = 'todo';
-  else if (title === 'In Progress') statusClass = 'inprogress';
-  else if (title === 'Done') statusClass = 'done';
-  else if (title === 'My Projects') statusClass = 'projects';
+  // Use statusClass prop if provided, else infer from title
+  let statusClass = statusClassProp || '';
+  if (!statusClass) {
+    if (title === 'To Do') statusClass = 'todo';
+    else if (title === 'In Progress') statusClass = 'inprogress';
+    else if (title === 'Done') statusClass = 'done';
+    else if (title === 'My Projects') statusClass = 'projects';
+  }
 
   // Get project info by ID - moved before it's used
   const getProjectInfo = (id) => state.projects.find(p => Number(p.id) === Number(id));
@@ -77,9 +83,13 @@ export default function TaskColumn({ title, filter, project, category, priority,
     return true;
   });
 
-  // Filter by project if selected
+  // Update project filter logic
   if (project && project !== 'all') {
-    filtered = filtered.filter(task => Number(task.projectId) === Number(project));
+    if (project === 'none') {
+      filtered = filtered.filter(task => !task.projectId || task.projectId === '' || task.projectId === null);
+    } else {
+      filtered = filtered.filter(task => Number(task.projectId) === Number(project));
+    }
   }
 
   // Update task count with animation
@@ -257,40 +267,133 @@ export default function TaskColumn({ title, filter, project, category, priority,
 
   // Handle Projects Column
   if (title === 'My Projects') {
-  const handleDelete = (id) => {
-      if (confirm('Are you sure you want to delete this project?')) {
+    const handleDelete = (id, e) => {
+      e.stopPropagation();
+      if (window.confirm('Are you sure you want to delete this project? This will also delete all associated tasks.')) {
         dispatch({ type: 'DELETE_PROJECT', payload: id });
+        setExpandedProject(null);
       }
     };
 
+    const handleEditProject = (project, e) => {
+      e.stopPropagation();
+      setEditingProject(project.id);
+      setEditProjectForm({ name: project.name, description: project.description, color: project.color });
+    };
+
+    const handleSaveProjectEdit = (e) => {
+      e.preventDefault();
+      dispatch({
+        type: 'EDIT_PROJECT',
+        payload: { id: editingProject, updates: editProjectForm }
+      });
+      setEditingProject(null);
+      setEditProjectForm({});
+    };
+
+    const handleCancelProjectEdit = (e) => {
+      e.stopPropagation();
+      setEditingProject(null);
+      setEditProjectForm({});
+    };
+
+    const handleProjectClick = (projectId, e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+      setExpandedProject(projectId);
+    };
+
+    const closeProjectModal = () => {
+      setExpandedProject(null);
+      setEditingProject(null);
+      setEditProjectForm({});
+    };
+
+    const project = expandedProject ? state.projects.find(p => p.id === expandedProject) : null;
+
     return (
-      <div className={`task-column projects`}>
-        <h2>
-          {title}
-          <span className="task-counter">{state.projects.length}</span>
-        </h2>
-        {state.projects.length === 0 ? (
-          <p style={{ fontStyle: 'italic', color: '#999' }}>No projects yet</p>
-        ) : (
-          state.projects.map((proj) => (
-            <div
-              key={proj.id}
-              className="task-card projects"
-              style={{ borderLeft: `6px solid ${proj.color}` }}
-            >
-              <h3>{proj.name}</h3>
-              <p>{proj.description}</p>
-              <button
-                onClick={() => handleDelete(proj.id)}
-                className="delete-button"
-                style={{ marginTop: '0.5rem' }}
+      <>
+        <div className={`task-column projects`}>
+          <h2>
+            {title}
+            <span className="task-counter">{state.projects.length}</span>
+          </h2>
+          {state.projects.length === 0 ? (
+            <p style={{ fontStyle: 'italic', color: '#999' }}>No projects yet</p>
+          ) : (
+            state.projects.map((proj) => (
+              <div
+                key={proj.id}
+                className="task-card projects"
+                style={{ borderLeft: `6px solid ${proj.color}` }}
+                onClick={e => handleProjectClick(proj.id, e)}
               >
-                🗑 Delete
-              </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <div className="color-dot" style={{ backgroundColor: proj.color }} />
+                  <strong>{proj.name}</strong>
+                </div>
+                {proj.description && <p style={{ fontSize: '0.95em', color: '#6b7280', marginBottom: '0.5rem' }}>{proj.description}</p>}
+                <div style={{ marginTop: '0.75rem' }}>
+                  <button onClick={e => handleEditProject(proj, e)} className="edit-button">Edit</button>
+                  <button onClick={e => handleDelete(proj.id, e)} className="delete-button">Delete</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {expandedProject && project && ReactDOM.createPortal(
+          <div className="task-modal-overlay" onClick={closeProjectModal}>
+            <div className="task-modal" onClick={e => e.stopPropagation()}>
+              <div className="task-header">
+                <div className="task-complete">
+                  <div className="color-dot" style={{ backgroundColor: project.color, marginRight: 8 }} />
+                  <strong>{project.name}</strong>
+                </div>
+                <button onClick={closeProjectModal} className="close-expand-btn">×</button>
+              </div>
+              {editingProject === expandedProject ? (
+                <form className="edit-form" onSubmit={handleSaveProjectEdit}>
+                  <input
+                    type="text"
+                    value={editProjectForm.name || ''}
+                    onChange={e => setEditProjectForm(f => ({ ...f, name: e.target.value }))}
+                    placeholder="Project Name"
+                    className="edit-input"
+                    required
+                  />
+                  <textarea
+                    value={editProjectForm.description || ''}
+                    onChange={e => setEditProjectForm(f => ({ ...f, description: e.target.value }))}
+                    placeholder="Description"
+                    className="edit-textarea"
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <label className="text-xs font-medium text-gray-700">Color:</label>
+                    <input
+                      type="color"
+                      value={editProjectForm.color || '#4f46e5'}
+                      onChange={e => setEditProjectForm(f => ({ ...f, color: e.target.value }))}
+                      className="h-6 border border-gray-300 rounded cursor-pointer"
+                    />
+                  </div>
+                  <div className="edit-buttons">
+                    <button type="submit" className="edit-button">Save</button>
+                    <button type="button" onClick={handleCancelProjectEdit} className="delete-button">Cancel</button>
+                  </div>
+                </form>
+              ) : (
+                <div className="task-expanded-content">
+                  {project.description && <p className="task-description">{project.description}</p>}
+                  <div className="task-actions">
+                    <button onClick={e => handleEditProject(project, e)} className="edit-button">Edit</button>
+                    <button onClick={e => handleDelete(project.id, e)} className="delete-button">Delete</button>
+                  </div>
+                </div>
+              )}
             </div>
-          ))
+          </div>,
+          document.body
         )}
-      </div>
+      </>
     );
   }
 
@@ -320,6 +423,7 @@ export default function TaskColumn({ title, filter, project, category, priority,
         const projectName = proj?.name || 'No Project';
         const overdue = isOverdue(task.dueDate);
         const dueSoon = isDueSoon(task.dueDate);
+        const isEditing = editingTask === task.id;
         return (
           <div
             key={task.id}
@@ -330,42 +434,81 @@ export default function TaskColumn({ title, filter, project, category, priority,
             onDragEnd={handleDragEnd}
             onClick={(e) => handleTaskClick(task.id, e)}
           >
-            <div className="task-complete">
-              <input
-                type="checkbox"
-                checked={task.status === 'Done'}
-                onChange={() => handleToggle(task.id)}
-              />
-              <strong>{task.title}</strong>
-            </div>
-            {/* BADGES ROW: Priority & Category */}
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-              {task.priority && (
-                <div className="priority-badge" style={{ backgroundColor: getPriorityColor(task.priority) }}>{task.priority}</div>
-              )}
-              {task.category && (
-                <div className="category-badge" style={{ backgroundColor: getCategoryColor(task.category), borderLeft: `4px solid ${getCategoryColor(task.category)}` }}>
-                  <span className="category-icon">{getCategoryIcon(task.category)}</span>
-                  <span className="category-name">{task.category}</span>
+            {isEditing ? (
+              <form onSubmit={handleSaveEdit} className="edit-task-form" onClick={e => e.stopPropagation()}>
+                <input
+                  type="text"
+                  value={editForm.title || ''}
+                  onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+                  required
+                />
+                <textarea
+                  value={editForm.description || ''}
+                  onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                />
+                <input
+                  type="text"
+                  value={editForm.assignee || ''}
+                  onChange={e => setEditForm(f => ({ ...f, assignee: e.target.value }))}
+                  placeholder="Assignee"
+                />
+                <select
+                  value={editForm.priority || ''}
+                  onChange={e => setEditForm(f => ({ ...f, priority: e.target.value }))}
+                >
+                  <option value="">Select Priority</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+                <input
+                  type="date"
+                  value={editForm.dueDate || ''}
+                  onChange={e => setEditForm(f => ({ ...f, dueDate: e.target.value }))}
+                />
+                <button type="submit" className="save-btn">Save</button>
+                <button type="button" className="cancel-btn" onClick={handleCancelEdit}>Cancel</button>
+              </form>
+            ) : (
+              <>
+                <div className="task-complete">
+                  <input
+                    type="checkbox"
+                    checked={task.status === 'Done'}
+                    onChange={() => handleToggle(task.id)}
+                  />
+                  <strong>{task.title}</strong>
                 </div>
-              )}
-            </div>
-            {/* DESCRIPTION & DETAILS */}
-            {task.description && <p>{task.description}</p>}
-            {task.assignee && <p><strong>Assignee:</strong> {task.assignee}</p>}
-            {task.dueDate && (
-              <p className={`due-date ${overdue ? 'overdue' : dueSoon ? 'due-soon' : ''}`}>
-                <strong>Due:</strong> {task.dueDate}
-                {overdue && <span className="warning-icon">⚠️ Overdue</span>}
-                {dueSoon && !overdue && <span className="warning-icon">⏰ Due Soon</span>}
-              </p>
+                {/* BADGES ROW: Priority & Category */}
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                  {task.priority && (
+                    <div className="priority-badge" style={{ backgroundColor: getPriorityColor(task.priority) }}>{task.priority}</div>
+                  )}
+                  {task.category && (
+                    <div className="category-badge" style={{ backgroundColor: getCategoryColor(task.category), borderLeft: `4px solid ${getCategoryColor(task.category)}` }}>
+                      <span className="category-icon">{getCategoryIcon(task.category)}</span>
+                      <span className="category-name">{task.category}</span>
+                    </div>
+                  )}
+                </div>
+                {/* DESCRIPTION & DETAILS */}
+                {task.description && <p>{task.description}</p>}
+                {task.assignee && <p><strong>Assignee:</strong> {task.assignee}</p>}
+                {task.dueDate && (
+                  <p className={`due-date ${overdue ? 'overdue' : dueSoon ? 'due-soon' : ''}`}>
+                    <strong>Due:</strong> {task.dueDate}
+                    {overdue && <span className="warning-icon">⚠️ Overdue</span>}
+                    {dueSoon && !overdue && <span className="warning-icon">⏰ Due Soon</span>}
+                  </p>
+                )}
+                {task.estimatedTime && <p><strong>Est. Time:</strong> {task.estimatedTime}h</p>}
+                <p style={{ backgroundColor: color, color: 'white', padding: '4px 8px', fontSize: '0.8rem', borderRadius: '6px', display: 'inline-block', marginTop: '0.5rem' }}>{projectName}</p>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <button onClick={e => handleEdit(task, e)} className="edit-button">Edit</button>
+                  <button onClick={e => handleDelete(task.id, e)} className="delete-button">Delete</button>
+                </div>
+              </>
             )}
-            {task.estimatedTime && <p><strong>Est. Time:</strong> {task.estimatedTime}h</p>}
-            <p style={{ backgroundColor: color, color: 'white', padding: '4px 8px', fontSize: '0.8rem', borderRadius: '6px', display: 'inline-block', marginTop: '0.5rem' }}>{projectName}</p>
-            <div style={{ marginTop: '0.75rem' }}>
-              <button onClick={(e) => handleEdit(task, e)} className="edit-button">Edit</button>
-              <button onClick={(e) => handleDelete(task.id, e)} className="delete-button">Delete</button>
-            </div>
           </div>
         );
       })}

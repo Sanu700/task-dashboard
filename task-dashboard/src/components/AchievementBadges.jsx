@@ -247,18 +247,32 @@ export default function AchievementBadges() {
     };
   }, [pendingBadge]);
 
+  // Add a helper to get/set celebrated badges in localStorage
+  function getCelebratedBadges() {
+    try {
+      return JSON.parse(localStorage.getItem('celebratedBadges') || '[]');
+    } catch {
+      return [];
+    }
+  }
+  function setCelebratedBadges(badges) {
+    localStorage.setItem('celebratedBadges', JSON.stringify(badges));
+  }
+
   // Add new badge to pending or show immediately
   useEffect(() => {
     const completedCount = state.tasks.filter(t => t.status === 'Done').length;
     const projectCount = state.projects.length;
     const earnedBadges = Object.values(achievements).filter(achievement => achievement.condition(state.tasks));
     const prevEarned = prevEarnedRef.current;
+    // Get celebrated badges from localStorage
+    const celebrated = getCelebratedBadges();
     if (
       (completedCount > prevCompletedCount.current || projectCount > prevProjectCount.current) &&
       earnedBadges.length > prevEarned.length
     ) {
       // Find the new badge(s)
-      const newBadges = earnedBadges.filter(b => !prevEarned.some(pb => pb.id === b.id));
+      const newBadges = earnedBadges.filter(b => !prevEarned.some(pb => pb.id === b.id) && !celebrated.includes(b.id));
       if (newBadges.length > 0) {
         // Use global confettiActive flag
         if (typeof window !== 'undefined' && window.confettiActive) {
@@ -266,6 +280,8 @@ export default function AchievementBadges() {
         } else {
           setJustEarnedBadge(newBadges[0]);
           setTimeout(() => setJustEarnedBadge(null), 4000);
+          // Mark as celebrated
+          setCelebratedBadges([...celebrated, ...newBadges.map(b => b.id)]);
         }
       }
     }

@@ -51,7 +51,7 @@ export default function TaskForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <h3>Add New Task</h3>
+      <h3 style={{ textAlign: 'center', marginBottom: '0.5rem', fontWeight: 700, color: '#6366f1' }}>Add New Task</h3>
       
       <input
         type="text"
@@ -139,6 +139,7 @@ export default function TaskForm() {
         className="w-full border border-gray-300 rounded px-3 py-2"
       >
         <option value="">Select Project</option>
+        <option value="none">None</option>
         {state.projects.map((project) => (
           <option key={project.id} value={project.id}>
             {project.name}
