@@ -1,10 +1,11 @@
 # ✅ Task Dashboard
 
-> **A productivity-focused task manager with built-in Pomodoro timer and achievement system.** Stay focused, track progress, and build consistent work habits.
+> **A modern, productivity-focused task manager built with React 19, Vite, and Tailwind CSS.** Track tasks, organize projects with Kanban boards, execute deep work sessions with Focus Mode, and stay productive.
 
 ![Task Dashboard](https://img.shields.io/badge/Task_Dashboard-v1.0.0-27ae60?style=for-the-badge)
-![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-f7df1e?style=flat-square&logo=javascript)
+![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)
+![Vite](https://img.shields.io/badge/Vite-6.3-646cff?style=flat-square&logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38b2ac?style=flat-square&logo=tailwindcss)
 ![Netlify](https://img.shields.io/badge/Deploy-Netlify-00c7b7?style=flat-square&logo=netlify)
 
 ---
@@ -15,32 +16,46 @@
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- ✅ **Task Management** — Create, complete, and delete tasks with a clean minimal interface
-- ⏱️ **Pomodoro Timer** — Built-in 25 min work / 5 min break cycle to maintain focus
-- 🏆 **Achievement Badges** — Earn rewards as you complete tasks and build streaks
-- 📊 **Progress Tracking** — Visual stats showing your productivity over time
-- 🎨 **Clean UI** — Minimal, distraction-free design built for deep work
-- 💾 **Persistent State** — Tasks and progress saved via localStorage — survive page refreshes
+- 📅 **Today & Upcoming Views** — Organize daily tasks and stay ahead of deadlines.
+- 📊 **Kanban Board & Projects** — Drag-and-drop workflow tracking across project columns.
+- ⏱️ **Focus Mode (Pomodoro)** — Dedicated focus timer with configurable work/break cycles.
+- ⚡ **Command Palette** — Access shortcuts and quick search anywhere using `Ctrl + K` / `Cmd + K`.
+- 📝 **Templates** — Quick-start common workflows and task lists.
+- 📈 **Insights & Analytics** — Track completion rates, streaks, and productivity trends.
+- 🎨 **Modern Dark UI** — Smooth animations powered by Framer Motion & Tailwind CSS v4.
+- 💾 **Persistent State** — Data auto-saves to `localStorage` so your tasks persist across reloads.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+
 
-### Installation
+- **Node.js** 18.x or higher
+- **npm** or **yarn** / **pnpm**
 
-```bash
-git clone https://github.com/Sanu700/task-dashboard.git
-cd task-dashboard
-npm install
-npm start
-```
+### Installation & Setup
 
-Open [http://localhost:3000](http://localhost:3000)
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Sanu700/task-dashboard.git
+   cd task-dashboard/task-dashboard
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open in browser:**
+   Navigate to [http://localhost:5173](http://localhost:5173)
 
 ---
 
@@ -48,16 +63,33 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ```
 task-dashboard/
-├── src/
-│   ├── components/
-│   │   ├── TaskList.js        # Task CRUD operations
-│   │   ├── PomodoroTimer.js   # 25/5 timer logic
-│   │   ├── Achievements.js    # Badge system
-│   │   └── ProgressStats.js   # Productivity tracking
-│   ├── App.js
-│   └── index.js
-├── public/
-└── package.json
+└── task-dashboard/
+    ├── public/
+    ├── src/
+    │   ├── assets/
+    │   ├── components/
+    │   │   ├── CommandPalette.jsx  # Global Command Palette (Cmd+K)
+    │   │   ├── FocusModal.jsx      # Pomodoro timer & focus session modal
+    │   │   ├── KanbanBoard.jsx     # Drag-and-drop board view
+    │   │   ├── Layout.jsx          # Main layout with navigation sidebar
+    │   │   ├── Sidebar.jsx         # Sidebar navigation & category links
+    │   │   └── TaskModal.jsx       # Task creation & editing modal
+    │   ├── context/
+    │   │   └── TaskContext.jsx     # Global state management & storage
+    │   ├── pages/
+    │   │   ├── Today.jsx          # Today's task list view
+    │   │   ├── Upcoming.jsx       # Scheduled future tasks
+    │   │   ├── Projects.jsx       # Project Kanban & list views
+    │   │   ├── Templates.jsx      # Prebuilt task templates
+    │   │   ├── Insights.jsx       # Productivity stats & charts
+    │   │   └── Settings.jsx       # Preferences & theme options
+    │   ├── utils/
+    │   ├── App.jsx                # Router configuration
+    │   ├── index.css              # Global styles & Tailwind CSS imports
+    │   └── main.jsx               # Application entry point
+    ├── index.html
+    ├── package.json
+    └── vite.config.js
 ```
 
 ---
@@ -66,21 +98,24 @@ task-dashboard/
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18, JavaScript |
-| Styling | CSS Modules |
-| Storage | localStorage |
-| Deployment | Netlify |
+| **Framework** | [React 19](https://react.dev/) |
+| **Build Tool** | [Vite 6](https://vitejs.dev/) |
+| **Routing** | [React Router 7](https://reactrouter.com/) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) |
+| **Animations** | [Framer Motion](https://framer.com/motion) |
+| **State & Storage** | React Context API & `localStorage` |
+| **Deployment** | [Netlify](https://www.netlify.com/) |
 
 ---
 
-## 🏆 Achievement System
+## 📜 Available Scripts
 
-| Badge | Unlock Condition |
-|-------|-----------------|
-| 🌱 First Task | Complete your first task |
-| 🔥 On Fire | Complete 5 tasks in one day |
-| ⏰ Pomodoro Pro | Complete 10 Pomodoro sessions |
-| 🎯 Streak Master | Maintain a 7-day streak |
+Inside the `task-dashboard/task-dashboard` directory, you can run:
+
+- `npm run dev` — Runs the app in development mode on port 5173.
+- `npm run build` — Builds the app for production to the `dist` folder.
+- `npm run preview` — Locally preview the production build.
+- `npm run lint` — Runs ESLint to check for code formatting and code quality issues.
 
 ---
 
